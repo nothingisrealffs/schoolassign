@@ -10,10 +10,12 @@ There is an additional file to download to test with a premade dataset for the l
 It is optional because if you save once you have achieved much of the function.
 
 1. Open the file RunMe.py
-2. Fill out the fields:
-  a. Distance, in Miles with the distance run, in miles.
+2. Select whether you're looking for Distance Run (you know your Pace) or Pace Info (you know your Distance). If opened by accident, click exit to leave.
+3. Fill out the fields:
+  a. Distance/Pace, in Miles with the distance run, in miles.
   b. Time, in minutes with the time it took in minutes to complete the run
   c. Desired time with what your target is/was.
 3. Click Record
 4. The output shows all important information to be derived. If that all looks accurate, press save.
 5. Next time you go running, fill it out again. It will remember the last run and tell you the differencial between them.
+No matter which one you use, it will save the info in the same form to be easy to keep comparing no matter what!
