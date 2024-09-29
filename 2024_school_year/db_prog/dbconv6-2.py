@@ -1,5 +1,12 @@
 import re
 import os
+def escape_single_quotes(value):
+    """Escape single quotes and ensure proper formatting for Oracle SQL."""
+    if value is not None:
+        # Remove any double quotes surrounding the entire string and replace single quotes for escaping
+        value = value.replace("'", "''").strip('"')
+    return value
+
 # Function to parse key-value pairs based on the provided schema
 def parse_mech_data(file_content):
     data = {}
@@ -169,16 +176,21 @@ def generate_sql(mech_data, output_folder):
         sql_statements.append(f"INSERT INTO Armor ({', '.join(table_fields['Armor'])}) VALUES {armor_values};")
 
     # Insert statements for the Weapons table
+# Insert statements for the Weapons table
     weapons = mech_data.get('Weapons', [])
     for idx, weapon in enumerate(weapons, start=1):
+        ammo_value = weapon.get('ammo')
+        if ammo_value is None:
+            ammo_value = 'NULL'  # Use SQL-compatible NULL instead of Python None
+
         weapon_values = (
             mech_id * 10 + idx,  # Generating a unique weapon_id
             mech_id,  # FK to chassis_id
-            weapon.get('weapon_name'),
-            weapon.get('location'),
-            weapon.get('ammo', None)  # Optional ammo field
+            escape_single_quotes(weapon.get('weapon_name')),
+            escape_single_quotes(weapon.get('location')),
+            ammo_value
         )
-        sql_statements.append(f"INSERT INTO Weapons ({', '.join(table_fields['Weapons'])}) VALUES {weapon_values};")
+        sql_statements.append(f"INSERT INTO Weapons ({', '.join(table_fields['Weapons'])}) VALUES ({weapon_values[0]}, {weapon_values[1]}, '{weapon_values[2]}', '{weapon_values[3]}', {ammo_value});")
 
     # Insert statements for the Quirks table
     quirks = mech_data.get('Quirks', {}).get('quirk', '').split(', ')
@@ -217,10 +229,10 @@ def generate_sql(mech_data, output_folder):
     history_values = (
         mech_id,  # Assuming history_id could be same as mech_id
         mech_id,  # FK to chassis_id
-        history.get('overview'),
-        history.get('capabilities'),
-        history.get('deployment'),
-        history.get('history')
+        escape_single_quotes(history.get('overview')),
+        escape_single_quotes(history.get('capabilities')),
+        escape_single_quotes(history.get('deployment')),
+        escape_single_quotes(history.get('history'))
     )
     sql_statements.append(f"INSERT INTO History_Overview ({', '.join(table_fields['History_Overview'])}) VALUES {history_values};")
 
